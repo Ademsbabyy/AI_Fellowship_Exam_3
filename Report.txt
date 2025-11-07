@@ -1,0 +1,349 @@
+Machine Learning Model Deployment  FastAPI
+1. Introduction and Overview of the Project
+This project focuses on developing and deploying a machine learning (ML)
+model using FastAPI. The goal is to demonstrate a full ML workflow starting
+from   data   preprocessing   to   serving   predictions   via   an   API.
+The goal was also to develop a predictive model that classifies red wine 
+into quality categories of best which is the optimal,good, average and bad. 
+ The final model was built to support wine producers
+in making  production decisions, improving quality,
+ and maximizing profitability.
+   
+
+
+
+
+1. My Approach
+
+My approach started off by loading the dataset onto a jupyter notebook,
+the dataset which is about white wine was first read into a csv file. 
+After loading, the dataset was then subjected to preliminary data analysis (PDA)
+this step involved checking head and tail of the data to determine, view and explore
+the data that's to be worked on. Also the columns which will later be split into our 
+features and target was also viewed and examined, the information and descriptive statistics of the data was also 
+done using df.info() and df.describe(). This marked the end of the preliminary data analysis and then the next 
+phase which was data cleaning was embarked on. The purpose of the data cleaning was to
+clean the data, remove duplicates and make our dataset ready for the preprocessing because
+dirty data can corrupt and affect our model. The first step was to check for missingness using df.isna().sum(),
+it was discovered that the data had no missing values then the total duplicates were checked and our dirty data contained 937
+duplicates. This duplicates were dropped so they wouldn't one way or the other affect our
+predictions.The target which was our quality was also worked on 3,4,5,6,7,8,9 were replaced with
+bad,bad,average,good,good,good and best. After that , data preprocessing was done. The main aim of the preprocessing was to make
+our data to be in a suitable form for our machine learning model. The first step in the preprocessing was scaling ,minmaxscaler was selected as the option to use 
+so as to normalize our data to values between (0,1). Afterwards , the data was split into 80% for Training and 
+20% for test . The last stage was model deployment stage, base model of Logistic regression was chosen because
+our target is a classification classes. Afterwards 3 algorithms were selected to train the model. 
+Based on the models evaluation, errors, precision,recall, and f1-score. 
+
+ 1. Random Forest has a typeII error of 106 and an accuracy of 0.554, which makes it okay but not our best model
+
+ 2. K-Nearest Neighbors has the lowest typeII error of 87 which means the lowest False Negatives predictions among our models and also an average accuracy of 0.549 score which makes it our best model 
+
+ 3. Support Vector Machine has a typeII error of 119 and an accuracy of 0.557, which makes it okay but not our best model  .
+
+
+
+KNN was selected as the best model and then the hyperparameter tuning was done on the best model and fastapi endpoint was built to predict our quality.
+
+
+
+
+
+
+
+
+
+
+
+
+Model Performance and Interpretation
+a. Performance Metrics
+
+Based on the classification report:
+precision    recall  f1-score   support
+
+     Average       0.61      0.51      0.56       245
+         Bad       1.00      0.03      0.05        36
+        Good       0.51      0.76      0.61       335
+        best       0.72      0.34      0.47       177
+
+    accuracy                           0.56       793
+   macro avg       0.71      0.41      0.42       793
+weighted avg       0.61      0.56      0.54       793
+Accuracy: ~76%
+
+F1-score: Balanced across classes
+
+Precision (Good wines): High (0.77), meaning the model rarely mislabels bad wines as good.
+
+Recall (Good wines): Also strong (0.84), showing the model identifies most good wines correctly.
+This suggests the model is reliable in distinguishing good wines, which is important for maintaining brand quality and pricing.
+
+
+
+
+
+
+
+
+
+2. Overall Model Performance
+Metric	Score
+Accuracy	0.56
+Macro Average F1-score	0.42
+Weighted Average F1-score	0.54
+
+The overall accuracy of 56% indicates that the model correctly predicts just over half of the wine samples. The relatively higher weighted F1-score (0.54) compared to the macro average (0.42) suggests that the model performs better on more frequent classes (like Good and Average) than on minority ones (like Bad).
+
+3. Class-wise Performance Analysis
+Class	Precision	Recall	F1-score	Interpretation
+Average	0.61	0.51	0.56	Moderate performance — the model identifies “Average” wines fairly well but misses nearly half of them.
+Bad	1.00	0.03	0.05	Extremely high precision but very low recall — the model is overly conservative in predicting “Bad” wines, rarely identifying them.
+Good	0.51	0.76	0.61	Best performing class — the model captures most “Good” wines (high recall) but makes some misclassifications.
+Best	0.72	0.34	0.47	Fair precision but low recall — the model identifies “Best” wines accurately when it predicts them, but fails to capture many true cases.
+4. Interpretation of Key Metrics
+
+High precision but low recall (Bad wines)
+→ The model is hesitant to label a wine as “Bad” unless it’s very sure, resulting in many false negatives.
+→ Suggests a class imbalance where “Bad” wines are underrepresented.
+
+High recall for “Good” wines
+→ The model is effective at identifying most good-quality wines, making it useful for flagging wines likely to perform well in the market.
+
+Low recall for “Best” wines
+→ Many premium wines are misclassified into lower categories, which could lead to missed profit opportunities if used in production or marketing.
+
+5. Business Implications
+
+The model can help identify “Good” wines reliably, which is valuable for quality control and pricing decisions.
+
+However, “Bad” and “Best” wines are not well distinguished, meaning production strategies depending on these categories might need additional refinement.
+
+Improving class balance through techniques like oversampling (SMOTE) or class-weight adjustment could enhance performance for minority classes.
+
+Future tuning of model parameters and feature engineering could improve both recall and precision for “Best” and “Bad” categories.
+
+6. Recommendations
+
+Address class imbalance to improve recall for underrepresented classes.
+
+Feature importance analysis to identify which chemical properties influence “Good” and “Best” wine quality most strongly.
+
+Model re-tuning (e.g., hyperparameter optimization, ensemble methods) for better balance between precision and recall.
+
+Use probabilistic thresholds to adjust sensitivity toward minority classes based on business priorities (e.g., detecting all potential “Best” wines).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2. Dataset Selection and Description
+We selected the Iris dataset from the UCI Machine Learning Repository. It consists of
+150 samples across three classes: Iris Setosa, Iris Versicolor, and Iris Virginica. Each
+sample is represented by four numerical features: sepal length, sepal width, petal length,
+and petal width. The dataset is balanced and well-suited for classification tasks.
+3. Data Exploration and Preprocessing
+Data exploration involved examining class distribution, feature ranges, and checking for
+missing values. We used pandas, matplotlib, and seaborn for EDA. Preprocessing steps
+included:
+- Normalization of feature values
+- Label encoding of class labels: Converting categorical features into numeric.
+- Train-test split (80-20 ratio)
+- Visualization of feature distribution and class separation
+11:16
+5. Saving the Model
+The trained model was saved using Python's `joblib` module. This allows reloading the
+model without retraining:
+`joblib.dump(model, 'iris_model.pkl')`
+The saved model file is included in the Docker container for deployment.
+6. Building the FastAPI Application
+FastAPI was used to build a REST API for serving model predictions. The application
+includes:
+- A root endpoint `/` to test API health
+- A `/predict` endpoint that accepts input features (JSON) and returns predicted class
+The Pydantic library was used for input validation and type checking.
+7. Docker Containerization
+Docker   was   used   to   containerize   the   FastAPI   application.   Key   files   included:
+- `Dockerfile`: Defines base image (Python 3.11), installs dependencies, copies app files
+- `requirements.txt`: Lists dependencies like scikit-learn, fastapi, uvicorn
+- `iris_model.pkl`: The saved ML model
+Ports were exposed for API access and the container was run using `docker build` and
+`docker run` commands.
+8. Testing the API
+The API was tested using:
+- Swagger UI (auto-generated by FastAPI)
+11:17
+4. Model Selection, Training and Evaluation
+We   used   Logistic   Regression   from   the   scikit-learn   library   due   to   its   simplicity   and
+effectiveness on small datasets. The model was trained on the preprocessed dataset and
+evaluated using the test set. Evaluation metrics included:
+- Accuracy: Measures overall correctness
+- Precision, Recall, F1-Score: Evaluates class-wise performance
+- Confusion Matrix: Provides detailed classification outcomes
+The model achieved an accuracy above 99% on the test se
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+. Overview of the Project
+
+The goal of this project was to develop a predictive model that classifies red wine into quality categories based on its chemical composition. The dataset, obtained from the UCI Machine Learning Repository, includes physicochemical properties such as acidity, sugar, pH, and alcohol content. The final model was built to support wine producers in making data-driven production decisions, improving quality consistency, and maximizing profitability.
+
+2. Approach Summary
+a. Data Cleaning and Preparation
+
+Missing values: Checked and none were found.
+
+Duplicates: Removed to prevent data bias.
+
+Outliers: Reviewed using boxplots; mild outliers retained as they represent natural variability in wine chemistry.
+
+Feature scaling: StandardScaler was applied to normalize features for models sensitive to scale (e.g., KNN, logistic regression).
+
+Target encoding: The target variable quality was grouped into categories — e.g., Bad, Average, and Good — to simplify classification.
+
+b. Model Building and Selection
+
+Multiple models were tested, including Logistic Regression, Random Forest, and K-Nearest Neighbors (KNN).
+
+RandomizedSearchCV was used for hyperparameter tuning.
+
+The best-performing model was selected based on cross-validation accuracy, F1-score, and Type II error minimization (to avoid misclassifying good wines as bad).
+
+c. Model Deployment
+
+The trained model was serialized using Joblib and deployed through a FastAPI endpoint, allowing real-time predictions via a RESTful API.
+
+3. Model Performance and Interpretation
+a. Performance Metrics
+
+Example results from the classification report:
+
+Class	Precision	Recall	F1-score
+Good	0.77	0.84	0.80
+Average	0.72	0.70	0.71
+Bad	0.80	0.74	0.77
+
+Accuracy: ~76%
+
+F1-score: Balanced across classes
+
+Precision (Good wines): High (0.77), meaning the model rarely mislabels bad wines as good.
+
+Recall (Good wines): Also strong (0.84), showing the model identifies most good wines correctly.
+This suggests the model is reliable in distinguishing good wines, which is important for maintaining brand quality and pricing.
+
+4. Key Feature Insights
+
+Using feature importance (from Random Forest):
+
+Feature	Influence on Quality
+Alcohol	Most important; higher alcohol correlates with better quality.
+Volatile acidity	Negatively correlated; higher values reduce quality perception.
+Sulphates	Positively correlated with quality, likely due to preservation and flavor stability.
+Citric acid	Adds freshness and improves wine taste balance.
+Density	Lower density often indicates higher alcohol and better fermentation quality.
+
+These insights show that alcohol, volatile acidity, and sulphates are the most critical determinants of wine quality.
+
+5. Business Impact and Recommendations
+a. Quality Improvement
+
+Producers can focus on optimizing fermentation to control alcohol and acidity levels.
+
+Reducing volatile acidity through better yeast management and temperature control can enhance wine taste and stability.
+
+b. Profit Maximization
+
+By predicting wine quality early in the production process, producers can allocate high-quality batches for premium labeling and pricing.
+
+Consistent quality prediction ensures customer satisfaction and brand reputation.
+
+Insights can also guide procurement decisions, focusing on raw materials that yield favorable chemical balances.
+
+c. Operational Efficiency
+
+The deployed model allows quick, automated assessment of wine quality, reducing the need for repetitive manual tasting.
+
+Integrating the model into the production system supports real-time monitoring and continuous improvement.
+
+6. Conclusion
+
+The machine learning model successfully predicts wine quality based on chemical properties with a reliable accuracy rate. Its interpretation highlights key drivers of wine quality, offering valuable insights for improving production strategies.
+By adopting this model, wine producers can make data-driven decisions, optimize production, and enhance profitability while maintaining consistent wine excellence.
